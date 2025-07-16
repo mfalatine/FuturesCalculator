@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📈 Futures Calculator Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #00274C 0%, #FFCB05 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(0, 39, 76, 0.3);
+            border-radius: 20px;
+            padding: 30px 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 203, 5, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .input-group select,
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(0, 39, 76, 0.6);
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .input-group select option {
+            background: #00274C;
+            color: white;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .calculation-mode {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(0, 39, 76, 0.6);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .mode-btn.active {
+            background: rgba(255, 203, 5, 0.8);
+            color: #00274C;
+            transform: scale(1.05);
+        }
+
+        .trade-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .direction-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .direction-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            background: rgba(0, 39, 76, 0.6);
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .direction-btn.bullish.active {
+            background: #FFCB05;
+            color: #00274C;
+        }
+
+        .direction-btn.bearish.active {
+            background: #FFCB05;
+            color: #00274C;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #FFCB05 0%, #00274C 100%);
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 203, 5, 0.5);
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .results {
+            background: rgba(0, 39, 76, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .result-value.positive {
+            color: #FFCB05;
+        }
+
+        .result-value.negative {
+            color: #f44336;
+        }
+
+        .market-info {
+            background: rgba(0, 39, 76, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 203, 5, 0.3);
+        }
+
+        .market-info h3 {
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            text-align: center;
+        }
+
+        .info-item .label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 5px;
+        }
+
+        .info-item .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .about {
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        @media (max-width: 400px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📈 Futures Calculator Pro</h1>
+            <p>Calculate profit/loss on futures trades</p>
+        </div>
+
+        <div class="input-group">
+            <label for="market">Select Futures Market</label>
+            <select id="market">
+                <option value="MNQ">Micro E-Mini NASDAQ-100 (MNQ)</option>
+                <option value="MES">Micro E-Mini S&P 500 (MES)</option>
+                <option value="MYM">Micro E-Mini Dow (MYM)</option>
+                <option value="M2K">Micro E-Mini Russell 2000 (M2K)</option>
+                <option value="ES">E-Mini S&P 500 (ES)</option>
+                <option value="NQ">E-Mini NASDAQ-100 (NQ)</option>
+                <option value="YM">E-Mini Dow (YM)</option>
+                <option value="RTY">E-Mini Russell 2000 (RTY)</option>
+                <option value="CL">Crude Oil (CL)</option>
+                <option value="GC">Gold (GC)</option>
+                <option value="SI">Silver (SI)</option>
+                <option value="NG">Natural Gas (NG)</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="contracts">Number of Contracts</label>
+            <input type="number" id="contracts" min="1" value="1" placeholder="Enter number of contracts">
+        </div>
+
+        <div class="calculation-mode">
+            <button class="mode-btn active" data-mode="ticks">Ticks</button>
+            <button class="mode-btn" data-mode="points">Points</button>
+            <button class="mode-btn" data-mode="trade">Full Trade</button>
+        </div>
+
+        <div id="tick-inputs" class="input-section">
+            <div class="input-group">
+                <label for="ticks">Number of Ticks</label>
+                <input type="number" id="ticks" step="0.25" placeholder="Enter number of ticks">
+            </div>
+        </div>
+
+        <div id="point-inputs" class="input-section hidden">
+            <div class="input-group">
+                <label for="points">Number of Points</label>
+                <input type="number" id="points" step="0.01" placeholder="Enter number of points">
+            </div>
+        </div>
+
+        <div id="trade-inputs" class="input-section hidden">
+            <div class="direction-toggle">
+                <button class="direction-btn bullish active" data-direction="bullish">📈 Bullish (Long)</button>
+                <button class="direction-btn bearish" data-direction="bearish">📉 Bearish (Short)</button>
+            </div>
+            <div class="trade-inputs">
+                <div class="input-group">
+                    <label for="entry-price">Entry Price</label>
+                    <input type="number" id="entry-price" step="0.01" placeholder="Entry price">
+                </div>
+                <div class="input-group">
+                    <label for="exit-price">Exit Price</label>
+                    <input type="number" id="exit-price" step="0.01" placeholder="Exit price">
+                </div>
+            </div>
+        </div>
+
+        <button class="calculate-btn" onclick="calculateProfit()">Calculate Profit/Loss</button>
+
+        <div id="results" class="results">
+            <div class="result-item">
+                <span class="result-label">Profit/Loss:</span>
+                <span id="pnl-result" class="result-value">$0.00</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Ticks:</span>
+                <span id="total-ticks" class="result-value">0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Total Points:</span>
+                <span id="total-points" class="result-value">0</span>
+            </div>
+            <div class="result-item">
+                <span class="result-label">Per Contract:</span>
+                <span id="per-contract" class="result-value">$0.00</span>
+            </div>
+        </div>
+
+        <div class="market-info">
+            <h3>Market Information</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">Price Format</div>
+                    <div id="price-format" class="value">7230</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Contract Size</div>
+                    <div id="contract-size" class="value">$2 x index value</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Tick Size</div>
+                    <div id="tick-size" class="value">0.25</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Tick Value</div>
+                    <div id="tick-value" class="value">$0.50</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Point Value</div>
+                    <div id="point-value" class="value">$2.00</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Exchange</div>
+                    <div id="exchange" class="value">CME</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Delivery Months</div>
+                    <div id="delivery-months" class="value">H, M, U, Z</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Trading Hours</div>
+                    <div id="trading-hours" class="value">Nearly 24 hours</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="about">
+            <p><strong>Futures Calculator Pro</strong></p>
+            <p>Version 1.0.0</p>
+            <p>Calculate profit/loss for futures trades</p>
+            <p>Data calculated in real-time</p>
+        </div>
+    </div>
+
+    <script>
+        const marketSpecs = {
+            MNQ: { 
+                tickSize: 0.25, 
+                tickValue: 0.50, 
+                pointValue: 2.00, 
+                exchange: 'CME',
+                priceFormat: '7230',
+                contractSize: '$2 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            MES: { 
+                tickSize: 0.25, 
+                tickValue: 1.25, 
+                pointValue: 5.00, 
+                exchange: 'CME',
+                priceFormat: '3900.00',
+                contractSize: '$5 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            MYM: { 
+                tickSize: 1, 
+                tickValue: 0.50, 
+                pointValue: 0.50, 
+                exchange: 'CME',
+                priceFormat: '34500',
+                contractSize: '$0.50 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            M2K: { 
+                tickSize: 0.10, 
+                tickValue: 0.50, 
+                pointValue: 5.00, 
+                exchange: 'CME',
+                priceFormat: '2100.0',
+                contractSize: '$5 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            ES: { 
+                tickSize: 0.25, 
+                tickValue: 12.50, 
+                pointValue: 50.00, 
+                exchange: 'CME',
+                priceFormat: '3900.00',
+                contractSize: '$50 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            NQ: { 
+                tickSize: 0.25, 
+                tickValue: 5.00, 
+                pointValue: 20.00, 
+                exchange: 'CME',
+                priceFormat: '14500.00',
+                contractSize: '$20 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            YM: { 
+                tickSize: 1, 
+                tickValue: 5.00, 
+                pointValue: 5.00, 
+                exchange: 'CME',
+                priceFormat: '34500',
+                contractSize: '$5 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            RTY: { 
+                tickSize: 0.10, 
+                tickValue: 5.00, 
+                pointValue: 50.00, 
+                exchange: 'CME',
+                priceFormat: '2100.0',
+                contractSize: '$50 x index value',
+                deliveryMonths: 'H, M, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            CL: { 
+                tickSize: 0.01, 
+                tickValue: 10.00, 
+                pointValue: 1000.00, 
+                exchange: 'NYMEX',
+                priceFormat: '75.50',
+                contractSize: '1,000 barrels',
+                deliveryMonths: 'All months',
+                tradingHours: 'Nearly 24 hours'
+            },
+            GC: { 
+                tickSize: 0.10, 
+                tickValue: 10.00, 
+                pointValue: 100.00, 
+                exchange: 'COMEX',
+                priceFormat: '1925.0',
+                contractSize: '100 troy ounces',
+                deliveryMonths: 'G, J, M, Q, V, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            SI: { 
+                tickSize: 0.005, 
+                tickValue: 25.00, 
+                pointValue: 5000.00, 
+                exchange: 'COMEX',
+                priceFormat: '24.500',
+                contractSize: '5,000 troy ounces',
+                deliveryMonths: 'H, K, N, U, Z',
+                tradingHours: 'Nearly 24 hours'
+            },
+            NG: { 
+                tickSize: 0.001, 
+                tickValue: 10.00, 
+                pointValue: 10000.00, 
+                exchange: 'NYMEX',
+                priceFormat: '3.125',
+                contractSize: '10,000 MMBtu',
+                deliveryMonths: 'All months',
+                tradingHours: 'Nearly 24 hours'
+            }
+        };
+
+        let currentMode = 'ticks';
+        let currentDirection = 'bullish';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateMarketInfo();
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMode = this.dataset.mode;
+                    switchMode(currentMode);
+                });
+            });
+
+            document.querySelectorAll('.direction-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.direction-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentDirection = this.dataset.direction;
+                });
+            });
+
+            const marketSelect = document.getElementById('market');
+            if (marketSelect) {
+                marketSelect.addEventListener('change', updateMarketInfo);
+            }
+        });
+
+        function switchMode(mode) {
+            document.querySelectorAll('.input-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            const targetSection = document.getElementById(mode + '-inputs');
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+        }
+
+        function updateMarketInfo() {
+            const marketSelect = document.getElementById('market');
+            if (!marketSelect) return;
+            
+            const market = marketSelect.value;
+            const spec = marketSpecs[market];
+            
+            document.getElementById('price-format').textContent = spec.priceFormat;
+            document.getElementById('contract-size').textContent = spec.contractSize;
+            document.getElementById('tick-size').textContent = spec.tickSize;
+            document.getElementById('tick-value').textContent = '$' + spec.tickValue.toFixed(2);
+            document.getElementById('point-value').textContent = '$' + spec.pointValue.toFixed(2);
+            document.getElementById('exchange').textContent = spec.exchange;
+            document.getElementById('delivery-months').textContent = spec.deliveryMonths;
+            document.getElementById('trading-hours').textContent = spec.tradingHours;
+        }
+
+        function calculateProfit() {
+            const marketSelect = document.getElementById('market');
+            const contractsInput = document.getElementById('contracts');
+            
+            if (!marketSelect || !contractsInput) return;
+            
+            const market = marketSelect.value;
+            const contracts = parseInt(contractsInput.value) || 1;
+            const spec = marketSpecs[market];
+            
+            let totalTicks = 0;
+            let totalPoints = 0;
+            let pnl = 0;
+
+            if (currentMode === 'ticks') {
+                const ticksInput = document.getElementById('ticks');
+                if (ticksInput) {
+                    totalTicks = parseFloat(ticksInput.value) || 0;
+                    totalPoints = totalTicks * spec.tickSize;
+                    pnl = totalTicks * spec.tickValue * contracts;
+                }
+            } else if (currentMode === 'points') {
+                const pointsInput = document.getElementById('points');
+                if (pointsInput) {
+                    totalPoints = parseFloat(pointsInput.value) || 0;
+                    totalTicks = totalPoints / spec.tickSize;
+                    pnl = totalPoints * spec.pointValue * contracts;
+                }
+            } else if (currentMode === 'trade') {
+                const entryPriceInput = document.getElementById('entry-price');
+                const exitPriceInput = document.getElementById('exit-price');
+                
+                if (entryPriceInput && exitPriceInput) {
+                    const entryPrice = parseFloat(entryPriceInput.value) || 0;
+                    const exitPrice = parseFloat(exitPriceInput.value) || 0;
+                    
+                    if (entryPrice === 0 || exitPrice === 0) {
+                        alert('Please enter both entry and exit prices');
+                        return;
+                    }
+                    
+                    let priceDiff = currentDirection === 'bullish' ? 
+                        (exitPrice - entryPrice) : (entryPrice - exitPrice);
+                    
+                    totalPoints = priceDiff;
+                    totalTicks = totalPoints / spec.tickSize;
+                    pnl = totalPoints * spec.pointValue * contracts;
+                }
+            }
+
+            document.getElementById('pnl-result').textContent = '$' + pnl.toFixed(2);
+            document.getElementById('total-ticks').textContent = totalTicks.toFixed(2);
+            document.getElementById('total-points').textContent = totalPoints.toFixed(2);
+            document.getElementById('per-contract').textContent = '$' + (pnl / contracts).toFixed(2);
+            
+            const pnlElement = document.getElementById('pnl-result');
+            const perContractElement = document.getElementById('per-contract');
+            
+            if (pnl > 0) {
+                pnlElement.className = 'result-value positive';
+                perContractElement.className = 'result-value positive';
+            } else if (pnl < 0) {
+                pnlElement.className = 'result-value negative';
+                perContractElement.className = 'result-value negative';
+            } else {
+                pnlElement.className = 'result-value';
+                perContractElement.className = 'result-value';
+            }
+            
+            document.getElementById('results').classList.add('show');
+        }
+    </script>
+</body>
+</html>
