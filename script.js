@@ -118,6 +118,56 @@ const marketSpecs = {
         contractSize: '10,000 MMBtu',
         deliveryMonths: 'All months',
         tradingHours: 'Nearly 24 hours'
+    },
+    MGC: { 
+        tickSize: 0.10, 
+        tickValue: 1.00, 
+        pointValue: 10.00, 
+        exchange: 'COMEX',
+        priceFormat: '1925.0',
+        contractSize: '10 troy ounces',
+        deliveryMonths: 'G, J, M, Q, V, Z',
+        tradingHours: 'Nearly 24 hours'
+    },
+    MSI: { 
+        tickSize: 0.005, 
+        tickValue: 2.50, 
+        pointValue: 500.00, 
+        exchange: 'COMEX',
+        priceFormat: '24.500',
+        contractSize: '1,000 troy ounces',
+        deliveryMonths: 'H, K, N, U, Z',
+        tradingHours: 'Nearly 24 hours'
+    },
+    QM: { 
+        tickSize: 0.025, 
+        tickValue: 2.50, 
+        pointValue: 100.00, 
+        exchange: 'NYMEX',
+        priceFormat: '75.50',
+        contractSize: '100 barrels',
+        deliveryMonths: 'All months',
+        tradingHours: 'Nearly 24 hours'
+    },
+    MCL: { 
+        tickSize: 0.025, 
+        tickValue: 2.50, 
+        pointValue: 100.00, 
+        exchange: 'NYMEX',
+        priceFormat: '75.50',
+        contractSize: '100 barrels',
+        deliveryMonths: 'All months',
+        tradingHours: 'Nearly 24 hours'
+    },
+    NKD: { 
+        tickSize: 5, 
+        tickValue: 25.00, 
+        pointValue: 5.00, 
+        exchange: 'CME',
+        priceFormat: '28500',
+        contractSize: '$5 x index value',
+        deliveryMonths: 'H, M, U, Z',
+        tradingHours: 'Nearly 24 hours'
     }
 };
 
